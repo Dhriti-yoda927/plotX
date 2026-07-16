@@ -8,3 +8,6 @@ def login_required(f):
             return redirect("\login")
         return f(*args,**kwargs)
     return decor_func
+
+def apology(message, code = 400):
+    return render_template("apology.html",top = code, bottom = message), code
