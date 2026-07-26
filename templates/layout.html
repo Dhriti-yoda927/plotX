@@ -16,7 +16,7 @@
         <nav class="bg-light border navbar navbar-expand-md navbar-light">
             <div class= "container-fluid">
                 
-                <a class = "navbar-brand" href = "#">plotX</a>
+                <a class = "navbar-brand" href = "/">plotX</a>
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -24,14 +24,26 @@
                         <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class = "collapse navbar-collapse" id = "navbar">
-                    <ul class = "navbar-nav ms-auto mt-2">
-                        <li class = "nav-item">
-                            <a href = "#" class = "nav-link">Register</a>
-                        </li>
-                        <li class = "nav-item">
-                            <a href = "#" class = "nav-link">Login</a>
-                        </li>
-                    </ul>
+                    {% if not session.get("id") %}
+                        <ul class = "navbar-nav ms-auto mt-2">
+                            <li class = "nav-item">
+                                <a href = "/register" class = "nav-link">Register</a>
+                            </li>
+                            <li class = "nav-item">
+                                <a href = "/login" class = "nav-link">Login</a>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <ul class = "navbar-nav ms-auto mt-2">
+                            <li class = "nav-item">
+                                <a href = "#" class = "nav-link">History</a>
+                            </li>
+                            <li class = "nav-item">
+                                <a href = "#" class = "nav-link">Logout</a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                        
                 </div>
             </div>
         </nav>
