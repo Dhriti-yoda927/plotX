@@ -18,10 +18,15 @@ cursor = conn.cursor()
 @app.after_request
 def after_request(response):
     #Ensures no responses are cached
-    response.header["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.header["Expires"] = 0
-    response.header["Pragma"] = "no-cache"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
     return response
+
+@app.route("/", methods = ["GET"])
+@login_required
+def home():
+    return render_template("home.html")
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
@@ -41,7 +46,7 @@ def register():
     except sqlite3.IntegrityError:
         return apology("Username already exists")
     conn.commit()
-    session["user_id"] = cursor.execute("SELECT id FROM users WHERE username = ?",(username,)).fetchone()["id"]
+    session["id"] = cursor.execute("SELECT id FROM users WHERE username = ?",(username,)).fetchone()[0]
     return redirect("/")
 
 @app.route("/login", methods = ["GET","POST"])
@@ -54,10 +59,13 @@ def login():
     if not (username and pwd):
         return apology("You cannot leave thse fields empty")
     row = cursor.execute("SELECT id, password_hash FROM users WHERE username = ?", (username,)).fetchone()
-    if row is None or not check_password_hash(row["password_hash"],pwd):
+    if row is None or not check_password_hash(row[1],pwd):
         return apology("Invalid username or password")
-    session["id"] = row["id"]
+    session["id"] = row[0]
     return redirect("/")
+
+
+
 
     
 

@@ -3,10 +3,14 @@
     home
 {% endblock %}
 {% block body %}
-    <form action = "/upload" method = "POST" enctype = "multipart/form-data">
-        <input type = "file" name = "filename" accept = ".csv">
-        <button type = "submit" class = "btn btn-primary">
-            upload
-        </button >
-    </form>
+    <div class = "container vh-100 d-flex justify-content-center align-items-center">
+        <div class = "text-center border rounded shadow p-5">
+            <form action = "/graphMenu" method = "POST" enctype = "multipart/form-data">
+                <input type = "file" name = "filename" accept = ".csv">
+                <button type = "submit" class = "btn btn-primary">
+                    upload
+                </button >
+            </form>
+        </div>
+    </div>   
 {% endblock %}
