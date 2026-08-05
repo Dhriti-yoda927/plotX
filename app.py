@@ -11,8 +11,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SESSION_PERMANENT"]= True
 app.permanent_session_lifetime = timedelta(days = 30)
-conn = sqlite3.connect("users.db")
-cursor = conn.cursor()
+
 
 
 @app.after_request
@@ -32,7 +31,8 @@ def home():
 def register():
     if request.method == "GET":
         return render_template("register.html")
-    
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
     username = request.form.get("username")
     pwd = request.form.get("pwd")
     pwdC = request.form.get("pwdC")
@@ -54,6 +54,8 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
     session.clear()
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
     username = request.form.get("username")
     pwd = request.form.get("pwd")
     if not (username and pwd):

@@ -4,7 +4,7 @@ from functools import wraps
 def login_required(f):
     @wraps(f)
     def decor_func(*args,**kwargs):
-        if session.get("user_id") is None:
+        if session.get("id") is None:
             return redirect("/login")
         return f(*args,**kwargs)
     return decor_func
