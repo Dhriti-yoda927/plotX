@@ -1,10 +1,13 @@
 import os
 import sqlite3
+import matplotlib.pyplot as plt
+import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, session
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash, secure_filename
 from helpers import login_required,apology
 from datetime import timedelta
 from dotenv import load_dotenv
+
 
 load_dotenv()
 app = Flask(__name__)
@@ -26,6 +29,28 @@ def after_request(response):
 @login_required
 def home():
     return render_template("home.html")
+
+@app.route("/graphMenu",methods = ["POST"])
+@login_required
+def graphMenu():
+    file = request.files.get("data")
+    if not file:
+        return apology("No file returned")
+    id = session["id"]
+    try:
+        user_folder = "uploads/"  + str(id)
+        os.makedirs(user_folder,exist_ok=True)
+        file_name = secure_filename(file.filename)
+        file.save(user_folder + "/" + file_name)
+    except OSError:
+        return apology("Upload wasn't succesful")
+    return render_template("graphMenu.html")
+
+
+
+
+
+
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
