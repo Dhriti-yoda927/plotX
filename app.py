@@ -30,6 +30,17 @@ def after_request(response):
 def home():
     return render_template("home.html")
 
+@app.route("/bar",methods = ["GET"])
+@login_required
+def bar():
+    id = session["id"]
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    fileName = conn.execute("SELECT filename FROM DATASETS WHERE user_id = ? ORDER BY id DESC LIMIT 1",(id,)).fetchone()
+    path = "uploads/" + str(id) + "/" + fileName[0]
+    
+
+
 @app.route("/graphMenu",methods = ["POST"])
 @login_required
 def graphMenu():
@@ -43,7 +54,12 @@ def graphMenu():
         file_name = secure_filename(file.filename)
         file.save(user_folder + "/" + file_name)
     except OSError:
-        return apology("Upload wasn't succesful")
+        return apology("Upload wasn't succesful")-
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO DATASETS (user_id,filename) VALUES (?,?)",(session["id"],file_name))
+    conn.commit()
+    conn.close()
     return render_template("graphMenu.html")
 
 
@@ -72,6 +88,7 @@ def register():
         return apology("Username already exists")
     conn.commit()
     session["id"] = cursor.execute("SELECT id FROM users WHERE username = ?",(username,)).fetchone()[0]
+    conn.close()
     return redirect("/")
 
 @app.route("/login", methods = ["GET","POST"])
@@ -89,6 +106,7 @@ def login():
     if row is None or not check_password_hash(row[1],pwd):
         return apology("Invalid username or password")
     session["id"] = row[0]
+    conn.close()
     return redirect("/")
 
 
