@@ -30,14 +30,24 @@ def after_request(response):
 def home():
     return render_template("home.html")
 
-@app.route("/bar",methods = ["GET"])
+@app.route("/line",methods = ["GET"])
 @login_required
-def bar():
+def line():
     id = session["id"]
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     fileName = conn.execute("SELECT filename FROM DATASETS WHERE user_id = ? ORDER BY id DESC LIMIT 1",(id,)).fetchone()
     path = "uploads/" + str(id) + "/" + fileName[0]
+    file = pd.read_csv(path)
+    x_col = file.columns[0]
+    y_col = file.columns[1]
+    ImagePath = os.path.join("uploads",str(id),os.path.splitext(fileName[0])[0] + ".png")
+    plt.plot(file[x_col],file[y_col],color = "black")
+    plt.xlabel(x_col)
+    plt.ylabel(y_col)
+    plt.savefig(ImagePath)
+    plt.close()
+
     
 
 
