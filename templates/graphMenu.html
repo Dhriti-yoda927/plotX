@@ -3,17 +3,25 @@
     Graph Menu
 {% endblock %}
 {% block body %}
-    <div class = "container vh-100 d-flex justify-content-center align-items-center">
-        <div class = "text-center border rounded shadow p-5">
-            <ul class = "navbar-nav ms-auto mt-2">
-                    <li class = "nav-item">
-                        <a href = "/line" class = "nav-link">Line Graph</a>
-                    </li>
-                    <li class = "nav-item">
-                        <a href = "/Bar" class = "nav-link">Bar Graph</a>
-                    </li>
-            </ul>
-            
-        </div>
-    </div>   
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+    <div class="text-center border rounded shadow p-5">
+        <form action="/generate_graph" method="POST">
+
+            <button type="submit"
+                    name="graph_type"
+                    value="1"
+                    class="btn btn-primary m-2">
+                Line Graph
+            </button>
+
+            <button type="submit"
+                    name="graph_type"
+                    value="2"
+                    class="btn btn-primary m-2">
+                Bar Graph
+            </button>
+
+        </form>
+    </div>
+</div>
 {% endblock %}

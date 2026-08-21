@@ -30,18 +30,34 @@ def after_request(response):
 def home():
     return render_template("home.html")
 
-@app.route("/line",methods = ["GET"])
+@app.route("/history",methods = ["GET","POST"])
 @login_required
-def line():
+def history():
+    id = session["id"]
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    if request.method == "POST":
+        fileId = request.form.get("file")
+
+        return
+    files = conn.execute("SELECT id,filename FROM DATASETS WHERE user_id = ? ORDER BY id",(id,))
+    return render_template("history.html",files= files.fetchall())
+
+@app.route("/generateGraph",methods = ["POST"])
+@login_required
+def generateGraph():
+    graphType = request.form.get("graph_type")
     id = session["id"]
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     fileName = conn.execute("SELECT filename FROM DATASETS WHERE user_id = ? ORDER BY id DESC LIMIT 1",(id,)).fetchone()
     path = "uploads/" + str(id) + "/" + fileName[0]
     file = pd.read_csv(path)
+
     x_col = file.columns[0]
     y_col = file.columns[1]
-    ImagePath = os.path.join("uploads",str(id),os.path.splitext(fileName[0])[0] + ".png")
+    ImagePath = os.path.join("uploads",str(id),os.path.splitext(fileName[0])[0] + "_Lineplot"+".png")
+    #Check if this image path already exists 
     plt.plot(file[x_col],file[y_col],color = "black")
     plt.xlabel(x_col)
     plt.ylabel(y_col)
@@ -64,7 +80,7 @@ def graphMenu():
         file_name = secure_filename(file.filename)
         file.save(user_folder + "/" + file_name)
     except OSError:
-        return apology("Upload wasn't succesful")-
+        return apology("Upload wasn't succesful")
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO DATASETS (user_id,filename) VALUES (?,?)",(session["id"],file_name))
