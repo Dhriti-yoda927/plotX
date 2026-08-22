@@ -14,8 +14,26 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SESSION_PERMANENT"]= True
 app.permanent_session_lifetime = timedelta(days = 30)
-
-
+graph_types = {
+    1: "line",
+    2: "bar"
+}
+graph_functions = {
+    "line" : line,
+    "bar" : bar
+}
+def bar():
+    return
+def line(file,filename):
+    x_col = file.columns[0]
+    y_col = file.columns[1]
+    ImagePath = os.path.join("uploads",str(id),"graphs",filename)
+    #Check if this image path already exists 
+    plt.plot(file[x_col],file[y_col],color = "black")
+    plt.xlabel(x_col)
+    plt.ylabel(y_col)
+    plt.savefig(ImagePath)
+    plt.close()
 
 @app.after_request
 def after_request(response):
@@ -35,34 +53,32 @@ def home():
 def history():
     id = session["id"]
     conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
     if request.method == "POST":
         fileId = request.form.get("file")
+        graphs = conn.execute("SELECT filename FROM GRAPHS WHERE dataset_id = ?",(fileId,)).fetchall()
+        return render_template("existingGraphs.html",graphs = graphs)
 
-        return
     files = conn.execute("SELECT id,filename FROM DATASETS WHERE user_id = ? ORDER BY id",(id,))
     return render_template("history.html",files= files.fetchall())
 
 @app.route("/generateGraph",methods = ["POST"])
 @login_required
 def generateGraph():
-    graphType = request.form.get("graph_type")
+    graphType = int(request.form.get("graph_type"))
     id = session["id"]
     conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-    fileName = conn.execute("SELECT filename FROM DATASETS WHERE user_id = ? ORDER BY id DESC LIMIT 1",(id,)).fetchone()
-    path = "uploads/" + str(id) + "/" + fileName[0]
+    fileName = conn.execute("SELECT id,filename FROM DATASETS WHERE user_id = ? ORDER BY id DESC LIMIT 1",(id,)).fetchone()
+    path = "uploads/" + str(id) + "/" + fileName[1]
     file = pd.read_csv(path)
+    existing = conn.execute("SELECT filename FROM GRAPHS WHERE dataset_id = ? AND graph_type = ?",(fileName[0], graphType)).fetchone()
+    if not existing:
+        graph_type = graph_types[graphType]
+        filename = fileName[1] + "_" + graph_type + ".png"
+        graph_functions[graph_type](file,filename)
+        conn.execute("INSERT INTO GRAPHS (dataset_id,graph_type,filename) VALUES (?,?,?)",(fileName[0],graphType,filename))
+    
+        
 
-    x_col = file.columns[0]
-    y_col = file.columns[1]
-    ImagePath = os.path.join("uploads",str(id),os.path.splitext(fileName[0])[0] + "_Lineplot"+".png")
-    #Check if this image path already exists 
-    plt.plot(file[x_col],file[y_col],color = "black")
-    plt.xlabel(x_col)
-    plt.ylabel(y_col)
-    plt.savefig(ImagePath)
-    plt.close()
 
     
 
@@ -76,7 +92,9 @@ def graphMenu():
     id = session["id"]
     try:
         user_folder = "uploads/"  + str(id)
+        graph_folder = os.path.join(user_folder,"graphs")
         os.makedirs(user_folder,exist_ok=True)
+        os.madedirs(graph_folder,exist_ok=True)
         file_name = secure_filename(file.filename)
         file.save(user_folder + "/" + file_name)
     except OSError:

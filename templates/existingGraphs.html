@@ -1,0 +1,65 @@
+{% extends layout.html %}
+{% block title %}
+    Existing Graphs
+{% endblock %}
+{% block body %}
+{% extends "layout.html" %}
+
+{% block title %}
+    Graphs
+{% endblock %}
+
+{% block body %}
+<script>
+
+    let currentImage = null;
+    
+    function enlarge(image) {
+    
+        if (currentImage !== null && currentImage !== image) {
+            currentImage.style.position = "";
+            currentImage.style.width = "";
+            currentImage.style.height = "";
+            currentImage.style.objectFit = "";
+            currentImage.style.top = "";
+            currentImage.style.left = "";
+            currentImage.style.transform = "";
+            currentImage.style.zIndex = "";
+        }
+    
+        if (currentImage === image) {
+            image.style.position = "";
+            image.style.width = "";
+            image.style.height = "";
+            image.style.objectFit = "";
+            image.style.top = "";
+            image.style.left = "";
+            image.style.transform = "";
+            image.style.zIndex = "";
+    
+            currentImage = null;
+            return;
+        }
+    
+        image.style.position = "fixed";
+        image.style.width = "80vw";
+        image.style.height = "80vh";
+        image.style.objectFit = "contain";
+        image.style.top = "50%";
+        image.style.left = "50%";
+        image.style.transform = "translate(-50%, -50%)";
+        image.style.zIndex = "1000";
+    
+        currentImage = image;
+    }
+    
+    </script>
+
+{% for graph in graphs %}
+    <img
+        src="{{ graph[0] }}"
+        onclick="enlarge(this)"
+        class="graph img-fluid rounded shadow m-2"
+    >
+{% endfor %}
+{% endblock %}
