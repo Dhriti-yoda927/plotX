@@ -24,7 +24,7 @@
                         <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class = "collapse navbar-collapse" id = "navbar">
-                    {% if not session.get("id") %}
+                    {% if not session.get("user_id") %}
                         <ul class = "navbar-nav ms-auto mt-2">
                             <li class = "nav-item">
                                 <a href = "/register" class = "nav-link">Register</a>
