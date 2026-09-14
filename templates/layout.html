@@ -16,7 +16,9 @@
         <nav class="bg-dark border navbar navbar-expand-md navbar-dark">
             <div class= "container-fluid">
                 
-                <a class = "navbar-brand" href = "/">plotX</a>
+                <a href="/" class="nav-link">
+                    <img src="/static/favicon.ico" alt="Home" class="navbar-logo">
+                </a>
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -36,10 +38,13 @@
                     {% else %}
                         <ul class = "navbar-nav ms-auto mt-2">
                             <li class = "nav-item">
-                                <a href = "#" class = "nav-link">History</a>
+                                <a href = "/history" class = "nav-link">History</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ back_url | default('/') }}" class="nav-link">Back</a>
                             </li>
                             <li class = "nav-item">
-                                <a href = "#" class = "nav-link">Logout</a>
+                                <a href = "/logout" class = "nav-link">Logout</a>
                             </li>
                         </ul>
                     {% endif %}

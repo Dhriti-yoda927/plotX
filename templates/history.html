@@ -1,11 +1,11 @@
-{% extends layout.html %}
+{% extends "layout.html" %}
 {% block title %}
     History
 {% endblock %}
 {% block body %}
-<div class="container vh-100 d-flex justify-content-center align-items-center">
+<div class="d-flex flex-column align-items-center">
     <div class="text-center border rounded shadow p-5">
-        <form action="#" method="POST">
+        <form action="/history" method="POST" class="d-flex flex-column align-items-center">
 
             {% for file in files %}
                 <button type = "submit"

@@ -1,65 +1,37 @@
-{% extends layout.html %}
-{% block title %}
-    Existing Graphs
-{% endblock %}
-{% block body %}
 {% extends "layout.html" %}
 
 {% block title %}
-    Graphs
+    Existing Graphs
 {% endblock %}
 
 {% block body %}
-<script>
 
-    let currentImage = null;
-    
-    function enlarge(image) {
-    
-        if (currentImage !== null && currentImage !== image) {
-            currentImage.style.position = "";
-            currentImage.style.width = "";
-            currentImage.style.height = "";
-            currentImage.style.objectFit = "";
-            currentImage.style.top = "";
-            currentImage.style.left = "";
-            currentImage.style.transform = "";
-            currentImage.style.zIndex = "";
-        }
-    
-        if (currentImage === image) {
-            image.style.position = "";
-            image.style.width = "";
-            image.style.height = "";
-            image.style.objectFit = "";
-            image.style.top = "";
-            image.style.left = "";
-            image.style.transform = "";
-            image.style.zIndex = "";
-    
-            currentImage = null;
-            return;
-        }
-    
-        image.style.position = "fixed";
-        image.style.width = "80vw";
-        image.style.height = "80vh";
-        image.style.objectFit = "contain";
-        image.style.top = "50%";
-        image.style.left = "50%";
-        image.style.transform = "translate(-50%, -50%)";
-        image.style.zIndex = "1000";
-    
-        currentImage = image;
+<style>
+    .graph {
+        transition: transform 0.2s ease;
     }
-    
-    </script>
+
+    .graph:hover {
+        transform: scale(1.15);
+        position: relative;
+        z-index: 10;
+    }
+</style>
 
 {% for graph in graphs %}
-    <img
-        src="{{ graph[0] }}"
-        onclick="enlarge(this)"
-        class="graph img-fluid rounded shadow m-2"
-    >
+<form action="/generateGraph" method="POST">
+
+    <input type="hidden" name="file_id" value="{{ graph[1] }}">
+    <input type="hidden" name="graph_type" value="{{ graph[2] }}">
+
+    <button type="submit" class="border-0 bg-transparent p-0">
+        <img
+            src="{{ url_for('graph', graph_name=graph[0]).removesuffix('.png') }}"
+            class="graph img-fluid rounded shadow m-2"
+        >
+    </button>
+
+</form>
 {% endfor %}
+
 {% endblock %}
